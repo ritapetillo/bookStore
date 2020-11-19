@@ -1,0 +1,73 @@
+.card-img,
+.card-img-top {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.card {
+  border: 0;
+  position: relative;
+  cursor: pointer;
+  padding-top:10px;
+}
+.bookList__image-container {
+  height: 250px;
+}
+.card-body {
+  padding: 10px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  min-height: 70px;
+}
+.bookList__price {
+  display: none;
+  font-size: 14px;
+  justify-content: space-between;
+  align-items: center;
+  color: #008575;
+}
+.bookList__price h5 {
+  font-size: 18px;
+  font-weight: 700;
+}
+.card:hover .bookList__price {
+  display: flex;
+}
+.card:hover .card-title {
+  display: none;
+}
+
+.bookList__title {
+  /* color:#008575; */
+  position: relative;
+  margin-bottom: 40px;
+}
+.bookList__title::after {
+  content: "";
+  position: absolute;
+  background-color: #008575;
+  bottom: -10px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+}
+.icon-cursor {
+  cursor: pointer;
+}
+.selected {
+ /* -webkit-box-shadow: -3px -1px 6px -1px #000000; 
+box-shadow: -3px -1px 6px -1px #000000; */
+border: 1px solid #008575;
+position: relative;
+}
+.selected::after{
+content:"";
+position:absolute;
+height:100%;
+width:100%;
+background-color:#0085760e ;
+top:0;
+left:0
+}

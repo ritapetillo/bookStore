@@ -1,0 +1,18 @@
+.singleBookPage__price-tag{
+    border:1px solid black;
+    padding:5px;
+    margin-left:10px;
+    margin-top: 20px;
+    min-width: 100px;
+
+
+}
+.singleBookPage__price-tag span{
+font-size: 15px; 
+}
+
+.singleBookPage__img{
+    height: 300px;
+    margin-top:24px;
+    border-radius: 5px;
+}

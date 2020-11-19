@@ -1,0 +1,16 @@
+.footer__container {
+  background-color: #008575;
+  padding: 40px 40px;
+
+}
+.footer__container h5{
+    color:rgba(255, 255, 255, 0.747);
+    font-size: 12px;
+    text-align: left;
+}
+.footer__container h4{
+    color:rgba(255, 255, 255);
+    font-size: 18px;
+    text-align: left;
+    font-weight: 700;
+}

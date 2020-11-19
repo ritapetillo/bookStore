@@ -1,0 +1,7 @@
+.hero{
+    background-image: url('https://dispatch.barnesandnoble.com/content/dam/ccr/homepage/daily/2020/11/06/optimized_Gateway_Billboard_B_11-06.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top center;
+    height: 450px;
+}
