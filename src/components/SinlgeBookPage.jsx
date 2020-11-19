@@ -7,76 +7,67 @@ import PriceTag from "./PriceTag";
 import SingleComment from "./SingleComment";
 import SearchIcon from "@material-ui/icons/Search";
 import { withRouter } from "react-router-dom";
-import allBooks from '../data/allbooks'
-
+import allBooks from "../data/allbooks";
+import StarIcon from "@material-ui/icons/Star";
 
 export class SinlgeBookPage extends Component {
-    state = {
-        token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI2NmEyYTk4MzViMDAwMTc1ODRlZWEiLCJpYXQiOjE2MDU3OTAyNTAsImV4cCI6MTYwNjk5OTg1MH0.Ejb3EVfJ7nTLrgnDHZxoIT42pIuuNrw04s4nqDxCR2I",
-        book:"",
-    
-        comments: [],
-        singleComment: {
-            comment: "",
-            rate: "",
-            elementId: "",
-        },
-        errorMsg: "",
-        loading: false,
-        allComments: [],
-        modified: false
-    };
-        componentDidUpdate = async (prevProp, prevState) => {
+  state = {
+    token:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI2NmEyYTk4MzViMDAwMTc1ODRlZWEiLCJpYXQiOjE2MDU3OTAyNTAsImV4cCI6MTYwNjk5OTg1MH0.Ejb3EVfJ7nTLrgnDHZxoIT42pIuuNrw04s4nqDxCR2I",
+    book: "",
+    averageRate: "",
 
-            if (this.state.modified ) {
-                this.fetchComments()
-                this.setState({modified:false})
-
-         
-        }
-      };
-
-    componentDidMount = async () => {
-        try {
-                      let book = await allBooks.filter(
-                        (book) => book.asin === this.props.match.params.id
-                      );
-                      this.setState({ book: book[0] });
-                      console.log(this.state.book);
-                      this.fetchComments();  
-        } catch (e) {
-            console.log(e)
-        }
-
-
-           
-            
-           
-        }
-    
-
-    fetchComments = async () => { 
-         let urlComments =
-                "https://striveschool-api.herokuapp.com/api/comments/" +
-                this.state.book.asin;
-        let headers = {
-            Authorization: `Bearer ${this.state.token}`,
-            "Content-Type": "application/json"
-        }
-         try {
-                let res = await fetch(urlComments, {
-                    method: "GET",
-                    headers: new Headers(headers),
-                });
-                let data = await res.json();
-                this.setState({ comments: data, allComments: data });
-              
-            } catch (e) {
-                console.log(e);
-            }
+    comments: [],
+    singleComment: {
+      comment: "",
+      rate: "",
+      elementId: "",
+    },
+    errorMsg: "",
+    loading: false,
+    allComments: [],
+    modified: false,
+  };
+  componentDidUpdate = async (prevProp, prevState) => {
+    if (this.state.modified) {
+      this.fetchComments();
+      this.setState({ modified: false });
     }
-    
+  };
+
+  componentDidMount = async () => {
+    try {
+      let book = await allBooks.filter(
+        (book) => book.asin === this.props.match.params.id
+      );
+      this.setState({ book: book[0] });
+      console.log(this.state.book);
+      this.fetchComments();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  fetchComments = async () => {
+    let urlComments =
+      "https://striveschool-api.herokuapp.com/api/comments/" +
+      this.state.book.asin;
+    let headers = {
+      Authorization: `Bearer ${this.state.token}`,
+      "Content-Type": "application/json",
+    };
+    try {
+      let res = await fetch(urlComments, {
+        method: "GET",
+        headers: new Headers(headers),
+      });
+      let data = await res.json();
+      this.setState({ comments: data, allComments: data });
+      this.getAvRate();
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,8 +94,8 @@ export class SinlgeBookPage extends Component {
             elementId: "",
           },
           errorMsg: "",
-            loading: false,
-            modified: true
+          loading: false,
+          modified: true,
         });
         console.log(this.state.singleComment);
       } else {
@@ -114,10 +105,7 @@ export class SinlgeBookPage extends Component {
     } catch (e) {
       this.setState({ errorMsg: e.message, loading: false });
     }
-       
-     }
-        
-    
+  };
 
   handleChange = (e) => {
     console.log(e.target.value);
@@ -140,13 +128,12 @@ export class SinlgeBookPage extends Component {
         method: "DELETE",
         headers: new Headers(headers),
       });
-        let data = await res.json();
-        if (res.ok) {
-            this.setState({modified:true})
-            
-        } else {
-            console.log('there is an error')
-        }
+      let data = await res.json();
+      if (res.ok) {
+        this.setState({ modified: true });
+      } else {
+        console.log("there is an error");
+      }
       console.log(data);
     } catch (e) {
       console.log(e);
@@ -156,15 +143,25 @@ export class SinlgeBookPage extends Component {
     console.log(this.state.allComments);
     let research = e.target.value;
     let { allComments } = this.state;
-      let filteredComments = allComments.filter((comment) =>
-        comment.comment.toLowerCase().includes(research.toLowerCase())
-      );
-      console.log(filteredComments)
+    let filteredComments = allComments.filter((comment) =>
+      comment.comment.toLowerCase().includes(research.toLowerCase())
+    );
+    console.log(filteredComments);
     this.setState({ comments: filteredComments });
   };
 
+  getAvRate = () => {
+    let { comments } = this.state;
+    let total = comments.reduce((tot, comm) => {
+      return tot + parseInt(comm.rate);
+    }, 0);
+    let average = Math.round(total / comments.length);
+
+    this.setState({ averageRate: average });
+  };
+
   render() {
-    let { book, comments } = this.state;
+    let { book, comments, averageRate } = this.state;
     return (
       <Container className="my-3">
         <Row>
@@ -179,6 +176,15 @@ export class SinlgeBookPage extends Component {
             <Row className="d-flex flex-column align-items-start divider py-4">
               <h3>{book.title}</h3>
               <h6 className="mb-2"># {book.asin}</h6>
+
+              <span className="d-flex mb-4">
+                {Array(averageRate)
+                  .fill("")
+                  .map((item) => (
+                    <StarIcon style={{ color: "#ffc107" }} />
+                  ))}
+              </span>
+
               <MyBadge category={book.category} />
             </Row>
             <Row className="d-flex flex-column align-items-start divider py-4">
@@ -230,4 +236,4 @@ export class SinlgeBookPage extends Component {
   }
 }
 
-export default withRouter (SinlgeBookPage);
+export default withRouter(SinlgeBookPage);
