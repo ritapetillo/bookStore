@@ -7,7 +7,14 @@ export default function SingleComment({ comment, author, rate, key, handleDelete
   return (
     <Row className="divider py-3 ">
       <Col className="d-flex flex-column align-items-start" sm={10}>
-        <span>{rate}</span>
+        <span>
+        
+          {Array(rate)
+            .fill("")
+            .map((item) => (
+              <StarIcon style={{ color: "#ffc107" }} />
+            ))}
+        </span>
         <small>from {author}</small>
         <p>{comment}</p>
       </Col>
