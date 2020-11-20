@@ -151,6 +151,7 @@ export class SinlgeBookPage extends Component {
   };
 
   getAvRate = () => {
+    
     if(comments.length > 0)
     {let { comments } = this.state;
     let total = comments.reduce((tot, comm) => {
