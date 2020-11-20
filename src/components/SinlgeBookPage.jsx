@@ -151,13 +151,14 @@ export class SinlgeBookPage extends Component {
   };
 
   getAvRate = () => {
-    let { comments } = this.state;
+    if(comments.length > 0)
+    {let { comments } = this.state;
     let total = comments.reduce((tot, comm) => {
       return tot + parseInt(comm.rate);
     }, 0);
     let average = Math.round(total / comments.length);
 
-    this.setState({ averageRate: average });
+    this.setState({ averageRate: average });}
   };
 
   render() {
