@@ -11,8 +11,9 @@ export default function SingleComment({
   handleDeleteComment,
   id,
 }) {
+  console.log(comment)
   return (
-    <Row className="divider py-3 ">
+    <Row className="divider py-3 text-left">
       <Col className="d-flex flex-column align-items-start" sm={10}>
         <span>
           {Array(rate)

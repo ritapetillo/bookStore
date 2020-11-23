@@ -22,11 +22,12 @@
   min-height: 70px;
 }
 .bookList__price {
-  display: none;
-  font-size: 14px;
+  /* display: none; */
+  font-size: 12px;
   justify-content: space-between;
   align-items: center;
   color: #008575;
+  display:flex;
 }
 .bookList__price h5 {
   font-size: 18px;
@@ -35,9 +36,9 @@
 .card:hover .bookList__price {
   display: flex;
 }
-.card:hover .card-title {
+/* .card:hover .card-title {
   display: none;
-}
+} */
 
 .bookList__title {
   /* color:#008575; */
@@ -56,13 +57,12 @@
 .icon-cursor {
   cursor: pointer;
 }
-.selected {
- /* -webkit-box-shadow: -3px -1px 6px -1px #000000; 
-box-shadow: -3px -1px 6px -1px #000000; */
+/* .selected {
+
 border: 1px solid #008575;
 position: relative;
-}
-.selected::after{
+} */
+/* .selected::after{
 content:"";
 position:absolute;
 height:100%;
@@ -70,4 +70,19 @@ width:100%;
 background-color:#0085760e ;
 top:0;
 left:0
+} */
+.comments__window{
+  z-index:2;
+  position: absolute;
+  width:20%;
+  background:white;
+  top:0;
+  right: 0;
+  height:100%;
+  border-left: 1px solid lightblue;
+
+}
+
+.comments__window .MuiSvgIcon-root:first-child{
+  cursor: pointer;
 }
