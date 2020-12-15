@@ -15,7 +15,9 @@ import scifi from "./data/scifi.json";
 import romance from "./data/romance.json";
 import SinlgeBookPage from "./components/SinlgeBookPage";
 import { Link, Route, Switch } from "react-router-dom";
-
+import RegistrationForm from "./components/RegistrationForm";
+import SummaryRegistration from "./components/SummaryRegistration";
+import { getAllBooks } from "./ftutilies";
 
 let books = {
   fantasy,
@@ -27,17 +29,27 @@ let books = {
 
 class App extends React.Component {
   state = {
-    bookList: books.fantasy.slice(0, 18),
-    title: "fantasy",
+    books: [],
+    bookList: [],
+    title: "All Books",
     reduced: false,
     index: 18,
   };
 
+  componentDidMount = async () => {
+    const books = await getAllBooks();
+    this.setState({
+      books,
+      bookList: books.slice(0, 18),
+    });
+    console.log(this.state.bookList);
+  };
+
   changeCategory = (cat) => {
-    this.setState({ bookList: books[cat].slice(0, 18), title: cat,index:18 });
+    this.setState({ bookList: books[cat].slice(0, 18), title: cat, index: 18 });
   };
   searchBook = (e) => {
-        let research = e.target.value;
+    let research = e.target.value;
 
     let allBooks = [...fantasy, ...horror, ...history, ...romance, ...scifi];
     let filteredBooks = allBooks.filter((book) =>
@@ -50,21 +62,22 @@ class App extends React.Component {
     });
   };
 
-  filterBooks = (e,cat) => {
-    let research= e.target.value;
-    let booksToFilter = books[cat]
-    let filteredBooks = booksToFilter.filter(book => book.title.toLocaleLowerCase().includes(research.toLocaleLowerCase()))
-   this.setState({bookList:filteredBooks})
-
-  }
+  filterBooks = (e, cat) => {
+    let research = e.target.value;
+    let booksToFilter = books[cat];
+    let filteredBooks = booksToFilter.filter((book) =>
+      book.title.toLocaleLowerCase().includes(research.toLocaleLowerCase())
+    );
+    this.setState({ bookList: filteredBooks });
+  };
   navigate = (cat, dir, increment) => {
     switch (dir) {
       case "back":
         if (this.state.index - increment >= 18) {
-          console.log(this.state.index)
+          console.log(this.state.index);
           this.setState({
-            bookList: books[cat].slice(
-              this.state.index - 2* increment,
+            bookList: this.state.books.slice(
+              this.state.index - 2 * increment,
               this.state.index - increment
             ),
             index: this.state.index - increment,
@@ -73,10 +86,9 @@ class App extends React.Component {
 
         break;
       case "next":
-        if (this.state.index + increment <= books[cat].length) {
-          
+        if (this.state.index + increment <= this.state.books.length) {
           this.setState({
-            bookList: books[cat].slice(
+            bookList: this.state.books.slice(
               this.state.index,
               this.state.index + increment
             ),
@@ -105,20 +117,27 @@ class App extends React.Component {
       <div className="App">
         <NavBar changeCategory={this.changeCategory} search={this.searchBook} />
         <Switch>
-          <Route exact path="/">
-            <Hero />
-            <BookList
-              bookList={this.state.bookList}
-              title={this.state.title}
-              reduce={this.reduce}
-              navigate={this.navigate}
-              indexBook={this.state.index}
-              filterBooks={this.filterBooks}
-            />
-          </Route>
+          <Route
+            exact
+            path="/"
+            render={(props) => (
+              <BookList
+                {...props}
+                bookList={this.state.bookList}
+                title={this.state.title}
+                reduce={this.reduce}
+                navigate={this.navigate}
+                indexBook={this.state.index}
+                filterBooks={this.filterBooks}
+              />
+            )}
+          />
+
           <Route exact path="/single-book/:id">
             <SinlgeBookPage />
           </Route>
+          <Route path="/registration" component={RegistrationForm} />
+          <Route path="/summary-registration" component={SummaryRegistration} />
         </Switch>
         <Footer />
       </div>

@@ -4,14 +4,13 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import StarIcon from "@material-ui/icons/Star";
 
 export default function SingleComment({
-  comment,
+  text,
   author,
   rate,
   key,
   handleDeleteComment,
   id,
 }) {
-  console.log(comment)
   return (
     <Row className="divider py-3 text-left">
       <Col className="d-flex flex-column align-items-start" sm={10}>
@@ -23,7 +22,7 @@ export default function SingleComment({
             ))}
         </span>
         <small>from {author}</small>
-        <p>{comment}</p>
+        <p>{text}</p>
       </Col>
       <Col className="d-flex align-items-center comment__item">
         <DeleteIcon

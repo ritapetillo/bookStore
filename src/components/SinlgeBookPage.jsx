@@ -9,6 +9,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { withRouter } from "react-router-dom";
 import allBooks from "../data/allbooks";
 import StarIcon from "@material-ui/icons/Star";
+import { getCommentsByBook, postComment, deleteComment } from "../ftutilies";
 
 export class SinlgeBookPage extends Component {
   state = {
@@ -19,28 +20,35 @@ export class SinlgeBookPage extends Component {
 
     comments: [],
     singleComment: {
-      comment: "",
+      text: "",
       rate: "",
-      elementId: "",
     },
     errorMsg: "",
     loading: false,
     allComments: [],
+    comments: [],
     modified: false,
   };
-  componentDidUpdate = async (prevProp, prevState) => {
-    if (this.state.modified) {
-      this.fetchComments();
-      this.setState({ modified: false });
-    }
-  };
+  // componentDidUpdate = async (prevProp, prevState) => {
+  //   if (this.state.modified) {
+  //     this.fetchComments();
+  //     this.setState({ modified: false });
+  //   }
+  // };
 
   componentDidMount = async () => {
     try {
       let book = await allBooks.filter(
         (book) => book.asin === this.props.match.params.id
       );
-      this.setState({ book: book[0] });
+      this.setState({
+        book: book[0],
+        singleComment: {
+          ...this.state.singleComment,
+          asin: this.props.match.params.id,
+          username: "rita",
+        },
+      });
       console.log(this.state.book);
       this.fetchComments();
     } catch (e) {
@@ -49,61 +57,29 @@ export class SinlgeBookPage extends Component {
   };
 
   fetchComments = async () => {
-    let urlComments =
-      "https://striveschool-api.herokuapp.com/api/comments/" +
-      this.state.book.asin;
-    let headers = {
-      Authorization: `Bearer ${this.state.token}`,
-      "Content-Type": "application/json",
-    };
-    try {
-      let res = await fetch(urlComments, {
-        method: "GET",
-        headers: new Headers(headers),
-      });
-      let data = await res.json();
-      this.setState({ comments: data, allComments: data });
-      this.getAvRate();
-    } catch (e) {
-      console.log(e);
-    }
+    const comments = await getCommentsByBook(this.state.book.asin);
+    this.setState({ comments: comments, allComments: comments });
+    console.log(this.state.comments);
+    this.getAvRate();
   };
 
   handleSubmit = async (e) => {
     e.preventDefault();
     this.setState({ loading: true });
-    let headers = {
-      Authorization: `Bearer ${this.state.token}`,
-      "Content-Type": "application/json",
-    };
-    try {
-      let res = await fetch(
-        "https://striveschool-api.herokuapp.com/api/comments/",
-        {
-          method: "POST",
-          headers: new Headers(headers),
-          body: JSON.stringify(this.state.singleComment),
-        }
-      );
-      console.log(res);
-      if (res.ok) {
-        this.setState({
-          singleComment: {
-            comment: "",
-            rate: "",
-            elementId: "",
-          },
-          errorMsg: "",
-          loading: false,
-          modified: true,
-        });
-        console.log(this.state.singleComment);
-      } else {
-        let error = await res.json();
-        this.setState({ errorMsg: error.message, loading: false });
-      }
-    } catch (e) {
-      this.setState({ errorMsg: e.message, loading: false });
+    const res = await postComment(this.state.singleComment);
+    if (res) {
+      this.setState({
+        singleComment: {
+          text: "",
+          rate: "",
+        },
+        errorMsg: "",
+        loading: false,
+        modified: true,
+      });
+      this.fetchComments();
+    } else {
+      this.setState({ loading: false });
     }
   };
 
@@ -111,34 +87,19 @@ export class SinlgeBookPage extends Component {
     console.log(e.target.value);
     let singleCommentClone = { ...this.state.singleComment };
     singleCommentClone[e.target.name] = e.target.value;
-    singleCommentClone.elementId = this.state.book.asin;
     this.setState({ singleComment: singleCommentClone });
     console.log(this.state.singleComment);
   };
   handleDeleteComment = async (id) => {
     console.log(id);
-    let urlComments =
-      "https://striveschool-api.herokuapp.com/api/comments/" + id;
-    let headers = {
-      Authorization: `Bearer ${this.state.token}`,
-      "Content-Type": "application/json",
-    };
-    try {
-      let res = await fetch(urlComments, {
-        method: "DELETE",
-        headers: new Headers(headers),
-      });
-      let data = await res.json();
-      if (res.ok) {
-        this.setState({ modified: true });
-      } else {
-        console.log("there is an error");
-      }
-      console.log(data);
-    } catch (e) {
-      console.log(e);
+    const res = await deleteComment(id);
+    if (res) {
+      this.fetchComments();
+    } else {
+      console.log("there is an error");
     }
   };
+
   filterComments = (e) => {
     console.log(this.state.allComments);
     let research = e.target.value;
@@ -164,6 +125,7 @@ export class SinlgeBookPage extends Component {
 
   render() {
     let { book, comments, averageRate } = this.state;
+    console.log(comments);
     return (
       <Container className="my-3">
         <Row>
@@ -214,22 +176,23 @@ export class SinlgeBookPage extends Component {
             <SearchIcon />
           </div>
         </Row>
-        {comments.map((comment) => (
-          <SingleComment
-            id={comment._id}
-            comment={comment.comment}
-            rate={comment.rate}
-            author={comment.author}
-            key={comment._id}
-            handleDeleteComment={this.handleDeleteComment}
-          />
-        ))}
+        {comments !== [] &&
+          comments.map((comment) => (
+            <SingleComment
+              id={comment._id}
+              text={comment.text}
+              rate={Number(comment.rate)}
+              author={comment.username}
+              key={comment._id}
+              handleDeleteComment={this.handleDeleteComment}
+            />
+          ))}
 
         <Row className="w-100">
           <CommentForm
             handleSubmit={this.handleSubmit}
             handleChange={this.handleChange}
-            comment={this.state.singleComment.comment}
+            text={this.state.singleComment.text}
             rate={this.state.singleComment.rate}
           />
         </Row>

@@ -2,7 +2,7 @@ import React from 'react'
 import { Form, Button } from "react-bootstrap";
 
 
-function CommentForm({handleSubmit,handleChange,comment,rate}) {
+function CommentForm({handleSubmit,handleChange,text,rate}) {
     return (
       <Form
         className="w-100 comment__form text-left"
@@ -13,8 +13,8 @@ function CommentForm({handleSubmit,handleChange,comment,rate}) {
           <Form.Control
             as="textarea"
             rows={3}
-            name="comment"
-            value={comment}
+            name="text"
+            value={text}
             onChange={(e) => handleChange(e)}
           />
         </Form.Group>

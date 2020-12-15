@@ -9,6 +9,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import "../style/BookList.css";
 import CommentWindow from "./CommentWindow";
 import { FlashOnRounded } from "@material-ui/icons";
+import Hero from "./Hero";
 
 
 export default class BookList extends Component {
@@ -122,8 +123,10 @@ export default class BookList extends Component {
       filterBooks,
     } = this.props;
     const { commentShow, currentBook, comments, currentBookTitle } = this.state;
-
+console.log(bookList)
     return (
+      <>
+        <Hero/>
       <Container className="position-relative">
         <Col md={12}>
           <div className="d-flex justify-content-between">
@@ -175,7 +178,8 @@ export default class BookList extends Component {
             handleDeleteComment={this.handleDeleteComment}
           />
         )}
-      </Container>
+        </Container>
+        </>
     );
   }
 }
